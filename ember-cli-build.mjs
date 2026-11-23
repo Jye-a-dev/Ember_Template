@@ -1,3 +1,4 @@
+import './windows-compat.mjs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import EmberApp from 'ember-cli/lib/broccoli/ember-app.js';

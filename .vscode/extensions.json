@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "typed-ember.glint-vscode",
+    "emberjs.vscode-ember",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss"
+  ]
+}

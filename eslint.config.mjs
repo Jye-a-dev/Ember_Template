@@ -50,7 +50,6 @@ export default defineConfig([
   ember.configs.gjs,
   ember.configs.gts,
   ...WarpDrive,
-  eslintConfigPrettier,
   /**
    * https://eslint.org/docs/latest/use/configure/configuration-files#configuring-linter-options
    */
@@ -105,7 +104,7 @@ export default defineConfig([
    */
   {
     ...n.configs['flat/recommended-script'],
-    files: ['**/*.cjs', 'config/**/*.js'],
+    files: ['**/*.cjs', 'config/**/*.js', 'commitlint.config.js'],
     plugins: {
       n,
     },
@@ -137,4 +136,5 @@ export default defineConfig([
       },
     },
   },
+  eslintConfigPrettier,
 ]);

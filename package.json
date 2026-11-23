@@ -15,8 +15,12 @@
     "test": "tests"
   },
   "scripts": {
+    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
-    "format": "prettier . --cache --write",
+    "preview": "vite preview",
+    "type-check": "ember-tsc --noEmit",
+    "format": "prettier --write .",
     "lint": "concurrently \"npm:lint:*(!fix)\" --names \"lint:\" --prefixColors auto",
     "lint:css": "stylelint \"**/*.css\"",
     "lint:css:fix": "concurrently \"npm:lint:css -- --fix\"",
@@ -27,8 +31,8 @@
     "lint:js": "eslint . --cache",
     "lint:js:fix": "eslint . --fix",
     "lint:types": "ember-tsc --noEmit",
-    "start": "vite",
-    "test": "vite build --mode development && testem ci --port 0"
+    "test": "vite build --mode development && testem ci --port 0",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.29.13",
@@ -36,6 +40,8 @@
     "@babel/plugin-transform-runtime": "^7.29.7",
     "@babel/plugin-transform-typescript": "^7.29.9",
     "@babel/runtime": "^7.29.13",
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@ember/app-tsconfig": "^2.1.0",
     "@ember/optional-features": "^3.0.0",
     "@ember/string": "^4.0.1",
@@ -54,6 +60,7 @@
     "@glint/template": "^1.11.1",
     "@glint/tsserver-plugin": "^2.7.16",
     "@rollup/plugin-babel": "^7.1.0",
+    "@types/node": "^22.14.0",
     "@types/qunit": "^2.19.14",
     "@types/rsvp": "^4.0.9",
     "@warp-drive/core": "~5.8.2",
@@ -74,7 +81,6 @@
     "ember-resolver": "^13.2.0",
     "ember-source": "~7.4.0",
     "ember-template-lint": "^7.9.4",
-    "ember-welcome-page": "^8.0.6",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-ember": "^12.7.5",
@@ -82,8 +88,11 @@
     "eslint-plugin-qunit": "^8.2.6",
     "eslint-plugin-warp-drive": "^5.9.1",
     "globals": "^16.5.0",
-    "prettier": "^3.9.10",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.2",
+    "prettier": "^3.10.1",
     "prettier-plugin-ember-template-tag": "^2.1.8",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "qunit": "^2.26.0",
     "qunit-dom": "^3.6.0",
     "stylelint": "^17.16.0",
@@ -98,5 +107,21 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "lint-staged": {
+    "*.{ts,gts,js,gjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.7.1",
+    "tailwindcss": "^4.3.5",
+    "zod": "^4.6.7"
   }
 }

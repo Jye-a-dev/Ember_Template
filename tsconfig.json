@@ -6,6 +6,7 @@
     "paths": {
       "ember-template/tests/*": ["./tests/*"],
       "ember-template/*": ["./app/*"],
+      "@/*": ["./app/*"],
       "*": ["./types/*"]
     },
     "types": [
