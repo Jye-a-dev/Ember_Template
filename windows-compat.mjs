@@ -6,6 +6,23 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
 if (process.platform === 'win32') {
+  // Normalize drive letter casing in process.cwd() for Windows
+  const cwd = process.cwd();
+  if (/^[a-z]:/.test(cwd)) {
+    try {
+      process.chdir(cwd.charAt(0).toUpperCase() + cwd.slice(1));
+    } catch {}
+  }
+
+  // Ensure Node 22.11.0 supports require() of ESM dependencies in ember-cli
+  if (
+    !process.env.NODE_OPTIONS ||
+    !process.env.NODE_OPTIONS.includes('--experimental-require-module')
+  ) {
+    process.env.NODE_OPTIONS =
+      (process.env.NODE_OPTIONS ? process.env.NODE_OPTIONS + ' ' : '') +
+      '--experimental-require-module';
+  }
   function patchFs(fsModule) {
     if (!fsModule || fsModule._patchedByEmberTemplate) return;
     fsModule._patchedByEmberTemplate = true;
@@ -52,6 +69,7 @@ if (process.platform === 'win32') {
       };
     }
 
+    let inUnlink = false;
     const origUnlinkSync = fsModule.unlinkSync;
     if (origUnlinkSync) {
       fsModule.unlinkSync = function (p) {
@@ -59,17 +77,24 @@ if (process.platform === 'win32') {
           return origUnlinkSync.call(fsModule, p);
         } catch (err) {
           if (
+            !inUnlink &&
             (err.code === 'EPERM' || err.code === 'EISDIR') &&
             fs.existsSync(p) &&
             fs.statSync(p).isDirectory()
           ) {
-            return fs.rmSync(p, { recursive: true, force: true });
+            inUnlink = true;
+            try {
+              return fs.rmSync(p, { recursive: true, force: true });
+            } finally {
+              inUnlink = false;
+            }
           }
           throw err;
         }
       };
     }
 
+    let inRmdir = false;
     const origRmdirSync = fsModule.rmdirSync;
     if (origRmdirSync) {
       fsModule.rmdirSync = function (p, options) {
@@ -77,10 +102,16 @@ if (process.platform === 'win32') {
           return origRmdirSync.call(fsModule, p, options);
         } catch (err) {
           if (
+            !inRmdir &&
             (err.code === 'ENOTEMPTY' || err.code === 'EPERM') &&
             fs.existsSync(p)
           ) {
-            return fs.rmSync(p, { recursive: true, force: true });
+            inRmdir = true;
+            try {
+              return fs.rmSync(p, { recursive: true, force: true });
+            } finally {
+              inRmdir = false;
+            }
           }
           throw err;
         }
